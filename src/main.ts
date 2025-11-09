@@ -1,24 +1,20 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { MyCanvas } from "./canvas";
+import { CANVAS_COLOR, NODE_BORDER_COLOR, NODE_COLOR, NODE_COUNT, NODE_RADIUS, WINDOW_HEIGHT, WINDOW_WIDTH } from "./constants";
+import { MyNode } from "./node";
+import { Position } from "./utils";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const container: HTMLElement | any = document.getElementById("app")
+const canvas: HTMLCanvasElement | any = document.getElementById("canvas")
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+let nodeList: MyNode[] = []
+
+for (let i = 0; i < NODE_COUNT; ++i) {
+  let pos = new Position((i + 1) * 100, 200);
+  nodeList.push(new MyNode(pos, NODE_RADIUS, NODE_COLOR, NODE_BORDER_COLOR, []));
+}
+
+const myCanvas: MyCanvas = new MyCanvas(canvas, 1000, 400, CANVAS_COLOR, nodeList)
+myCanvas.draw()
+
+
+console.log("asd");
