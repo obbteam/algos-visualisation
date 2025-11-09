@@ -1,4 +1,4 @@
-import { NODE_COLOR, WINDOW_HEIGHT, WINDOW_WIDTH } from "./constants";
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from "./constants";
 import type { MyNode } from "./node";
 import { Color } from "./utils";
 

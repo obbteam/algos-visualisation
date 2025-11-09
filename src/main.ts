@@ -3,7 +3,6 @@ import { CANVAS_COLOR, NODE_BORDER_COLOR, NODE_COLOR, NODE_COUNT, NODE_RADIUS, W
 import { MyNode } from "./node";
 import { Position } from "./utils";
 
-const container: HTMLElement | any = document.getElementById("app")
 const canvas: HTMLCanvasElement | any = document.getElementById("canvas")
 
 let nodeList: MyNode[] = []
@@ -13,7 +12,7 @@ for (let i = 0; i < NODE_COUNT; ++i) {
   nodeList.push(new MyNode(pos, NODE_RADIUS, NODE_COLOR, NODE_BORDER_COLOR, []));
 }
 
-const myCanvas: MyCanvas = new MyCanvas(canvas, 1000, 400, CANVAS_COLOR, nodeList)
+const myCanvas: MyCanvas = new MyCanvas(canvas, WINDOW_WIDTH, WINDOW_HEIGHT, CANVAS_COLOR, nodeList)
 myCanvas.draw()
 
 
