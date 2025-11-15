@@ -1,19 +1,16 @@
 import { MyCanvas } from "./canvas";
 import { CANVAS_COLOR, NODE_BORDER_COLOR, NODE_COLOR, NODE_COUNT, NODE_RADIUS, WINDOW_HEIGHT, WINDOW_WIDTH } from "./constants";
 import { MyNode } from "./node";
-import { Position } from "./utils";
 
 const canvas: HTMLCanvasElement | any = document.getElementById("canvas")
 
-let nodeList: MyNode[] = []
+const myCanvas: MyCanvas = new MyCanvas(canvas, WINDOW_WIDTH, WINDOW_HEIGHT, CANVAS_COLOR, [])
 
 for (let i = 0; i < NODE_COUNT; ++i) {
-  let pos = new Position((i + 1) * 100, 200);
-  nodeList.push(new MyNode(pos, NODE_RADIUS, NODE_COLOR, NODE_BORDER_COLOR, []));
+  myCanvas.pushNode(new MyNode(null, NODE_RADIUS, NODE_COLOR, NODE_BORDER_COLOR, []));
 }
 
-const myCanvas: MyCanvas = new MyCanvas(canvas, WINDOW_WIDTH, WINDOW_HEIGHT, CANVAS_COLOR, nodeList)
-myCanvas.draw()
+requestAnimationFrame(myCanvas.draw)
 
 
 console.log("asd");
