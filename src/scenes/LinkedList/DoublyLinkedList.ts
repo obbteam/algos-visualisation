@@ -1,13 +1,13 @@
 import { ACCENT_COLOR } from "../../constants";
-import type { INodeVisual } from "../../INodeVisual";
+import type { INode } from "../../INode";
 import type { Color, Position } from "../../utils";
 
-export class DoublyLinkedList implements INodeVisual {
-    data: number;
+export class DoublyLinkedList implements INode {
     next: DoublyLinkedList | null;
     prev: DoublyLinkedList | null;
 
     // INodeVisual
+    data:number;
     position: Position | null;
     radius: number;
     color: Color;
@@ -33,8 +33,8 @@ export class DoublyLinkedList implements INodeVisual {
         this.borderColor = borderColor;
     }
 
-    public getConnectedNodesVisuals(): INodeVisual[] {
-        let connected : INodeVisual[] = []
+    public getConnectedNodesVisuals(): INode[] {
+        let connected : INode[] = []
         if (this.next) {
             connected.push(this.next)
         }

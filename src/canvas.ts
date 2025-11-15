@@ -1,40 +1,70 @@
-import { ACCENT_COLOR, BORDER_WIDTH, DEFAULT_EDGE_LENGTH, EDGE_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH } from "./constants";
-import type { INodeVisual } from "./INodeVisual";
+import { ACCENT_COLOR, BORDER_WIDTH, DEFAULT_EDGE_LENGTH, EDGE_WIDTH } from "./constants";
+import type { INode } from "./INode";
 import type { LinkedListNode } from "./scenes/LinkedList/LinkedList";
 import { Color, Position } from "./utils";
 
 export class MyCanvas {
     canvas: HTMLCanvasElement;
-    width: number;
-    height: number;
     backgroundColor: Color;
     nodeList: LinkedListNode[];
+    width: number = 0;
+    height:number = 0;
+    ctx: CanvasRenderingContext2D;
 
 
     constructor(
         canvas: HTMLCanvasElement,
-        width: number,
-        height: number,
         backgroundColor: Color,
         nodeList: LinkedListNode[]
     ) {
         this.canvas = canvas;
-        this.width = width;
-        this.height = height;
         this.backgroundColor = backgroundColor;
         this.nodeList = nodeList;
+        
+        const context = this.canvas.getContext("2d", { alpha: false });
+        if (!context) {
+            throw new Error("Could not get canvas context");
+        }
+        this.ctx = context;
+
+        // Set initial size and listen for resizes
+        this.resize();
+        window.addEventListener("resize", this.resize);
+    }
+    
+    /**
+     * Handles resizing the canvas to fill the window
+     * and correcting for high-DPI (Retina) displays.
+     */
+    public resize = (): void => {
+        const dpr = window.devicePixelRatio || 1;
+        
+        // Use the window's size for a full-screen app
+        this.width = window.innerWidth;
+        this.height = window.innerHeight - 200;
+
+        // Set the internal bitmap size (scaled by DPR)
+        this.canvas.width = this.width * dpr;
+        this.canvas.height = this.height * dpr;
+
+        // Set the display size (CSS pixels)
+        this.canvas.style.width = `${this.width}px`;
+        this.canvas.style.height = `${this.height}px`;
+
+        // Scale the context to match
+        this.ctx.scale(dpr, dpr);
+
+        // Recenter nodes whenever the window resizes
+        this.centerNodes();
     }
 
 
     public draw = (): void => {
-        this.canvas.width = WINDOW_WIDTH;
-        this.canvas.height = WINDOW_HEIGHT;
-        this.canvas.style.backgroundColor = this.backgroundColor.convertToString();
+        this.ctx.fillStyle = this.backgroundColor.convertToString();
+        this.ctx.fillRect(0, 0, this.width, this.height);
 
-        const ctx = this.canvas.getContext("2d");
-        if (!ctx) return
         for (let i = 0; i < this.nodeList.length; ++i) {
-            this.drawNode(ctx, this.nodeList[i])
+            this.drawNode(this.nodeList[i])
         }
 
         requestAnimationFrame(this.draw);
@@ -56,8 +86,8 @@ export class MyCanvas {
         let startNode = this.nodeList[0];
         let chainWidth = this.nodeList.length * (startNode.radius * 2 + DEFAULT_EDGE_LENGTH) - DEFAULT_EDGE_LENGTH;
 
-        let startX = (WINDOW_WIDTH - chainWidth) / 2 + startNode.radius;
-        startNode.position = new Position(startX, WINDOW_HEIGHT / 2)
+        let startX = (this.width - chainWidth) / 2 + startNode.radius;
+        startNode.position = new Position(startX, this.height / 2)
 
         let prevPos = startNode.position
 
@@ -68,31 +98,42 @@ export class MyCanvas {
         }
     }
 
-    private drawNode = (ctx: CanvasRenderingContext2D, node: INodeVisual): void => {
+    private drawNode = (node: INode): void => {
         if (node.position == null) {
             console.log("Can not draw a node with a null position");
             return;
         }
 
-        ctx.beginPath();
-        ctx.lineWidth = EDGE_WIDTH;
-        ctx.strokeStyle = ACCENT_COLOR.convertToString();
+        // draw connections
+        this.ctx.beginPath();
+        this.ctx.lineWidth = EDGE_WIDTH;
+        this.ctx.strokeStyle = ACCENT_COLOR.convertToString();
 
-        node.getConnectedNodesVisuals().forEach((connectedNode: INodeVisual) => {
+        node.getConnectedNodesVisuals().forEach((connectedNode: INode) => {
             if (connectedNode.position == null) return;
-            ctx.moveTo(node.position!.x, node.position!.y);
-            ctx.lineTo(connectedNode.position.x, connectedNode.position.y)
+            this.ctx.moveTo(node.position!.x, node.position!.y);
+            this.ctx.lineTo(connectedNode.position.x, connectedNode.position.y)
         })
 
-        ctx.stroke();
+        this.ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(node.position.x, node.position.y, node.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = node.color.convertToString();
-        ctx.fill();
+        // draw circle
+        this.ctx.beginPath();
+        this.ctx.arc(node.position.x, node.position.y, node.radius, 0, 2 * Math.PI);
+        this.ctx.fillStyle = node.color.convertToString();
+        this.ctx.fill();
 
-        ctx.lineWidth = BORDER_WIDTH;
-        ctx.strokeStyle = node.borderColor.convertToString();
-        ctx.stroke();
+        // draw border
+        this.ctx.lineWidth = BORDER_WIDTH;
+        this.ctx.strokeStyle = node.borderColor.convertToString();
+        this.ctx.stroke();
+
+        // draw data
+        this.ctx.fillStyle = "black";
+        this.ctx.font = "16px Arial";
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+
+        this.ctx.fillText(node.data.toString(), node.position.x, node.position.y);
     }
 }

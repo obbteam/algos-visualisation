@@ -1,10 +1,12 @@
 import { Color, Position } from "./utils";
 
-export interface INodeVisual {
+export interface INode {
     position: Position | null;
     radius: number;
     color: Color;
     borderColor: Color;
 
-    getConnectedNodesVisuals() : INodeVisual[];
+    data: number;
+
+    getConnectedNodesVisuals() : INode[];
 }

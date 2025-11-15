@@ -1,7 +1,5 @@
 import { Color } from "./utils";
 
-export const WINDOW_WIDTH: number = 1200
-export const WINDOW_HEIGHT: number = 500
 export const CANVAS_COLOR: Color = new Color(28, 37, 65);
 
 export const BASIC_COLOR: Color = new Color(241, 245, 249);

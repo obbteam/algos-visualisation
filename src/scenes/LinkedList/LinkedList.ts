@@ -1,8 +1,8 @@
 import { ACCENT_COLOR } from "../../constants";
-import type { INodeVisual } from "../../INodeVisual";
-import type { Color, Position } from "../../utils";
+import type { INode } from "../../INode";
+import { sleep, type Color, type Position } from "../../utils";
 
-export class LinkedListNode implements INodeVisual {
+export class LinkedListNode implements INode {
     data: number;
     next: LinkedListNode | null;
 
@@ -37,7 +37,7 @@ export class LinkedListNode implements INodeVisual {
         return [];
     }
 
-    public traverse = (): void => {
+    public traverse = async (sleepTimeMS: number) : Promise<void> => {
         let cur : LinkedListNode | null = this;
         console.log("Starting the traversal");
 
@@ -45,6 +45,7 @@ export class LinkedListNode implements INodeVisual {
             console.log(cur.data);
             cur.color = ACCENT_COLOR;
             cur = cur.next;
+            await sleep(sleepTimeMS);
         }
 
         console.log("Traversal complete");
